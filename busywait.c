@@ -19,7 +19,7 @@ void* productor_busy(void* arg) {
 
         pthread_mutex_lock(&mutex_busy);
         buffer_busy[in_busy] = item;
-        printf("🛠 [busy] Productor produjo: %d\n", item);
+        printf("[busy] Productor produjo: %d\n", item);
         in_busy = (in_busy + 1) % BUFFER_SIZE;
         count_busy++;
         pthread_mutex_unlock(&mutex_busy);
@@ -35,7 +35,7 @@ void* consumidor_busy(void* arg) {
 
         pthread_mutex_lock(&mutex_busy);
         int item = buffer_busy[out_busy];
-        printf("🍽 [busy] Consumidor consumió: %d\n", item);
+        printf("[busy] Consumidor consumió: %d\n", item);
         out_busy = (out_busy + 1) % BUFFER_SIZE;
         count_busy--;
         pthread_mutex_unlock(&mutex_busy);
@@ -45,7 +45,7 @@ void* consumidor_busy(void* arg) {
     pthread_exit(NULL);
 }
 
-void version_busy_wait() {
+int main() {
     pthread_t prod_thread, cons_thread;
 
     pthread_mutex_init(&mutex_busy, NULL);
@@ -57,4 +57,6 @@ void version_busy_wait() {
     pthread_join(cons_thread, NULL);
 
     pthread_mutex_destroy(&mutex_busy);
+
+    return 0;
 }

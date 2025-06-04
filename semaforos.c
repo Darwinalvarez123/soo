@@ -26,10 +26,10 @@ void* productor(void* arg) {
         in = (in + 1) % BUFFER_SIZE;
 
         pthread_mutex_unlock(&mutex); 
+        sem_post(&lleno);  // ¡IMPORTANTE! Avisa que hay un nuevo item disponible
 
         sleep(1); 
     }
-
     pthread_exit(NULL);
 }
 
@@ -37,6 +37,7 @@ void* consumidor(void* arg) {
     for (int i = 0; i < NUM_ITEMS; i++) {
         sem_wait(&lleno);              
         pthread_mutex_lock(&mutex);    
+        
         int item = buffer[out];
         printf("Consumidor consumió: %d\n", item);
         out = (out + 1) % BUFFER_SIZE;
@@ -46,26 +47,22 @@ void* consumidor(void* arg) {
 
         sleep(2); 
     }
-
     pthread_exit(NULL);
 }
 
 int main() {
     pthread_t prod_thread, cons_thread;
 
- 
-    sem_init(&lleno, 0, 0);
-    sem_init(&vacio, 0, BUFFER_SIZE);
+    sem_init(&lleno, 0, 0);  // Inicialmente no hay items
+    sem_init(&vacio, 0, BUFFER_SIZE);  // Buffer vacío
     pthread_mutex_init(&mutex, NULL);
 
-  
     pthread_create(&prod_thread, NULL, productor, NULL);
     pthread_create(&cons_thread, NULL, consumidor, NULL);
 
     pthread_join(prod_thread, NULL);
     pthread_join(cons_thread, NULL);
 
-   
     sem_destroy(&lleno);
     sem_destroy(&vacio);
     pthread_mutex_destroy(&mutex);

@@ -44,7 +44,7 @@ void* consumidor_cond(void* arg) {
         }
 
         int item = buffer_cond[out_cond];
-        printf(" [cond] Consumidor consumió: %d\n", item);
+        printf("[cond] Consumidor consumió: %d\n", item);
         out_cond = (out_cond + 1) % BUFFER_SIZE;
         count--;
 
@@ -56,7 +56,7 @@ void* consumidor_cond(void* arg) {
     pthread_exit(NULL);
 }
 
-void version_condiciones() {
+int main() {
     pthread_t prod_thread, cons_thread;
 
     pthread_mutex_init(&mutex_cond, NULL);
@@ -72,4 +72,6 @@ void version_condiciones() {
     pthread_mutex_destroy(&mutex_cond);
     pthread_cond_destroy(&cond_lleno);
     pthread_cond_destroy(&cond_vacio);
+
+    return 0;
 }
